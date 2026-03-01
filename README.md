@@ -1,52 +1,49 @@
-ContactPro – Intelligent Relationship Management System
-Overview
+# ContactPro – Intelligent Relationship Management System
 
-ContactPro is a web-based relationship management backend system built using Spring Boot and PostgreSQL.
-It provides structured contact management, follow-up tracking, task management, and relationship analytics.
+## 📌 Overview
 
-Unlike traditional contact storage systems, ContactPro focuses on intelligent relationship tracking and automation.
+ContactPro is a web-based relationship management backend system built using **Spring Boot** and **PostgreSQL**.
 
-This project is developed as part of internship experience and backend learning journey.
+It goes beyond traditional contact storage by enabling structured contact management, follow-up tracking, task management, and relationship analytics.
 
-Tech Stack
+This project is developed as part of an internship and backend engineering learning journey.
 
-Backend:
+---
 
-Java 17+
+## 🚀 Tech Stack
 
-Spring Boot 4
+### Backend
+- Java 17+
+- Spring Boot 4
+- Spring Data JPA (Hibernate)
+- Spring Security (JWT – upcoming)
+- Maven
 
-Spring Data JPA (Hibernate)
+### Database
+- PostgreSQL
 
-Spring Security (JWT – upcoming)
+### API Testing
+- Postman / Thunder Client
 
-Maven
+---
 
-Database:
+## 🏗 Architecture
 
-PostgreSQL
-
-Testing:
-
-Postman / Thunder Client
-
-Architecture
-
-The project follows a layered architecture:
+The project follows a clean layered architecture:
 
 Controller → Service → Repository → Database
 
-Controller handles HTTP requests
 
-Service contains business logic
+- **Controller** → Handles HTTP requests
+- **Service** → Contains business logic
+- **Repository** → Handles database operations
+- **Entity** → Maps Java classes to database tables
+- **DTO** → Used for secure API communication
 
-Repository handles database operations
+---
 
-Entity maps Java classes to database tables
+## 📂 Project Structure
 
-DTO is used for secure API communication
-
-Project Structure
 com.contactpro.contactpro
 ├── controller
 ├── service
@@ -57,82 +54,43 @@ com.contactpro.contactpro
 ├── security
 ├── exception
 └── ContactproApplication.java
-Features (Current Phase)
-User Module
 
-Create User
 
-Get All Users
+---
 
-Entity-based table creation
+## ✅ Features (Current Phase)
 
-DTO-based API structure
+### 👤 User Module
+- Create User
+- Get All Users
+- Entity-based table creation
+- DTO-based API structure
+- Layered architecture implementation
 
-Layered architecture
+### 📇 Contact Module (In Progress)
+- One-to-Many relationship with User
+- Contact entity with foreign key mapping
+- Category, notes, block/favorite flags
 
-Contact Module (In Progress)
+---
 
-One-to-Many relationship with User
+## 🗄 Database Schema
 
-Contact entity with foreign key mapping
+### Users Table
+- `id` (Primary Key)
+- `name`
+- `email` (Unique)
+- `password`
+- `created_at`
 
-Category, notes, block/favorite flags
-
-Database Schema
-Users Table
-
-id (Primary Key)
-
-name
-
-email (Unique)
-
-password
-
-created_at
-
-Contacts Table
-
-id (Primary Key)
-
-user_id (Foreign Key)
-
-name
-
-phone
-
-email
-
-category
-
-notes
-
-is_blocked
-
-is_favorite
-
-created_at
-
-How To Run The Project
-
-Clone repository
-
-Install PostgreSQL
-
-Create database:
-
-contactpro
-
-Update application.properties:
-
-spring.datasource.url=jdbc:postgresql://localhost:5432/contactpro
-spring.datasource.username=postgres
-spring.datasource.password=your_password
-
-spring.jpa.hibernate.ddl-auto=update
-
-Run:
-
-mvn spring-boot:run
-
-Test APIs using Postman.
+### Contacts Table
+- `id` (Primary Key)
+- `user_id` (Foreign Key)
+- `name`
+- `phone`
+- `email`
+- `category`
+- `notes`
+- `is_blocked`
+- `is_favorite`
+- `created_at`
