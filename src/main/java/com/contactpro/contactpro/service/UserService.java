@@ -1,5 +1,6 @@
 package com.contactpro.contactpro.service;
 
+import com.contactpro.contactpro.exception.InvalidCredentialsException;
 import org.springframework.stereotype.Service;
 import com.contactpro.contactpro.repository.UserRepository;
 import com.contactpro.contactpro.model.User;
@@ -8,6 +9,8 @@ import com.contactpro.contactpro.dto.UserResponse;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import java.util.List;
 import java.util.stream.Collectors;
+import com.contactpro.contactpro.dto.LoginRequest;
+import com.contactpro.contactpro.dto.LoginResponse;
 
 /*
  * @Service means:
@@ -45,6 +48,24 @@ public class UserService {
                 saved.getId(),
                 saved.getName(),
                 saved.getEmail()
+        );
+    }
+    public LoginResponse login(LoginRequest request) {
+
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        boolean isPasswordMatch =
+                passwordEncoder.matches(request.getPassword(), user.getPassword());
+
+        if (!isPasswordMatch) {
+            throw new InvalidCredentialsException("Invalid email or password");
+        }
+
+        return new LoginResponse(
+                "Login successful",
+                user.getId(),
+                user.getEmail()
         );
     }
 

@@ -29,4 +29,10 @@ public class ContactResponse {
 
     public Long getId() { return id; }
     public String getName() { return name; }
+    public String getPhone() { return phone; }
+    public String getEmail() { return email; }
+    public String getCategory() { return category; }
+    public boolean isBlocked() { return isBlocked; }
+    public boolean isFavorite() { return isFavorite; }
+    public LocalDateTime getCreatedAt() { return createdAt; }
 }
