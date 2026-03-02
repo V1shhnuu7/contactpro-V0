@@ -1,5 +1,8 @@
 package com.contactpro.contactpro.model;
 
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.CascadeType;
+import java.util.List;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
@@ -49,6 +52,10 @@ public class User {
     /*
      * Default constructor required by JPA
      */
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Contact> contacts;
+
     public User() {}
 
     /*

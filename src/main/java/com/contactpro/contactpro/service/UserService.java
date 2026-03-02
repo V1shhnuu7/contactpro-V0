@@ -5,7 +5,7 @@ import com.contactpro.contactpro.repository.UserRepository;
 import com.contactpro.contactpro.model.User;
 import com.contactpro.contactpro.dto.UserRequest;
 import com.contactpro.contactpro.dto.UserResponse;
-
+import org.springframework.security.crypto.password.PasswordEncoder;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -16,14 +16,17 @@ import java.util.stream.Collectors;
 @Service
 public class UserService {
 
+
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     /*
      * Constructor injection.
      * Spring automatically injects UserRepository.
      */
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     /*
@@ -34,8 +37,8 @@ public class UserService {
         User user = new User();
         user.setName(request.getName());
         user.setEmail(request.getEmail());
-        user.setPassword(request.getPassword());
-
+        String hashedPassword = passwordEncoder.encode(request.getPassword());
+        user.setPassword(hashedPassword);
         User saved = userRepository.save(user);
 
         return new UserResponse(
