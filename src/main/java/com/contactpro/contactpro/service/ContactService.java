@@ -1,8 +1,12 @@
 package com.contactpro.contactpro.service;
 
+import ezvcard.Ezvcard;
+import ezvcard.VCard;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -12,6 +16,7 @@ import com.contactpro.contactpro.model.Contact;
 import com.contactpro.contactpro.model.User;
 import com.contactpro.contactpro.dto.ContactRequest;
 import com.contactpro.contactpro.dto.ContactResponse;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class ContactService {
@@ -169,6 +174,45 @@ public class ContactService {
         );
     }
 
+    public void importFromVcf(Long userId, MultipartFile file) {
+
+        try {
+
+            User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+
+            List<VCard> vcards = Ezvcard.parse(file.getInputStream()).all();
+
+            for (VCard vcard : vcards) {
+
+                Contact contact = new Contact();
+
+                if (vcard.getFormattedName() != null) {
+                    contact.setName(vcard.getFormattedName().getValue());
+                }
+
+                if (!vcard.getTelephoneNumbers().isEmpty()) {
+                    contact.setPhone(
+                            vcard.getTelephoneNumbers().get(0).getText()
+                    );
+                }
+
+                if (!vcard.getEmails().isEmpty()) {
+                    contact.setEmail(
+                            vcard.getEmails().get(0).getValue()
+                    );
+                }
+
+                contact.setUser(user);
+
+                contactRepository.save(contact);
+            }
+
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to import VCF contacts");
+        }
+    }
+
     /*
      * Get all contacts of a specific user
      */
@@ -187,6 +231,30 @@ public class ContactService {
                         contact.getCreatedAt()
                 ))
                 .collect(Collectors.toList());
+    }
+
+    public String exportToVcf(Long userId) {
+
+        List<Contact> contacts =
+                contactRepository.findByUserId(userId);
+
+        List<VCard> vcards = new ArrayList<>();
+
+        for (Contact contact : contacts) {
+
+            VCard vcard = new VCard();
+
+            vcard.setFormattedName(contact.getName());
+            vcard.addTelephoneNumber(contact.getPhone());
+
+            if (contact.getEmail() != null) {
+                vcard.addEmail(contact.getEmail());
+            }
+
+            vcards.add(vcard);
+        }
+
+        return Ezvcard.write(vcards).go();
     }
 
     public void deleteContact(Long contactId, Long userId) {

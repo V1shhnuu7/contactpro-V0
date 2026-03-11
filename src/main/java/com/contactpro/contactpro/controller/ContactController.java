@@ -1,12 +1,14 @@
 package com.contactpro.contactpro.controller;
 
 import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 import com.contactpro.contactpro.service.ContactService;
 import com.contactpro.contactpro.dto.ContactRequest;
 import com.contactpro.contactpro.dto.ContactResponse;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/contacts")
@@ -51,6 +53,28 @@ public class ContactController {
             @RequestParam int size) {
 
         return contactService.searchContacts(userId, keyword, page, size);
+    }
+
+    @GetMapping("/export-vcf")
+    public ResponseEntity<String> exportContacts(
+            @RequestParam Long userId) {
+
+        String vcf = contactService.exportToVcf(userId);
+
+        return ResponseEntity.ok()
+                .header("Content-Disposition",
+                        "attachment; filename=contacts.vcf")
+                .body(vcf);
+    }
+
+    @PostMapping("/import-vcf")
+    public String importVcfContacts(
+            @RequestParam Long userId,
+            @RequestParam("file") MultipartFile file) {
+
+        contactService.importFromVcf(userId, file);
+
+        return "VCF contacts imported successfully";
     }
 
     @PutMapping("/{contactId}")
