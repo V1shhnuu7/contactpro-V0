@@ -25,8 +25,19 @@ public interface ContactRepository extends JpaRepository<Contact, Long> {
             Pageable pageable
     );
 
+    long countByUserId(Long userId);
+// counts total contacts belonging to a specific user
+
     Page<Contact> findByUserIdAndIsFavoriteTrue(
             Long userId,
             Pageable pageable
     );
+    // searches contacts whose name contains the given keyword
+    List<Contact> findByNameContainingIgnoreCase(String name);
+
+    List<Contact> findByUserIdAndIsFavoriteTrue(Long userId);
+// returns contacts marked as favorite
+
+    List<Contact> findByUserIdAndIsBlockedTrue(Long userId);
+// returns contacts marked as blocked
 }

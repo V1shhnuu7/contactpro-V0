@@ -67,6 +67,28 @@ public class ContactController {
                 .body(vcf);
     }
 
+    @GetMapping("/search")
+    public List<ContactResponse> searchContacts(
+            @RequestParam String name) {
+
+        return contactService.searchContacts(name);
+    }
+
+    @GetMapping("/favorites")
+    public List<ContactResponse> getFavoriteContacts(
+            @RequestParam Long userId) {
+
+        return contactService.getFavoriteContacts(userId);
+    }
+// endpoint to retrieve user's favorite contacts
+    @GetMapping("/blocked")
+    public List<ContactResponse> getBlockedContacts(
+            @RequestParam Long userId) {
+
+        return contactService.getBlockedContacts(userId);
+}
+// endpoint to retrieve blocked contacts
+
     @PostMapping("/import-vcf")
     public String importVcfContacts(
             @RequestParam Long userId,
@@ -86,6 +108,15 @@ public class ContactController {
         return contactService.updateContact(contactId, userId, request);
     }
 
+    @GetMapping("/paged")
+    public Page<ContactResponse> getContactsPaged(
+            @RequestParam Long userId,
+            @RequestParam int page,
+            @RequestParam int size) {
+
+        return contactService.getContactsPaged(userId, page, size);
+    }
+
     @PatchMapping("/{contactId}/favorite")
     public ContactResponse toggleFavorite(
             @PathVariable Long contactId,
@@ -102,4 +133,6 @@ public class ContactController {
         contactService.deleteContact(contactId, userId);
         return "Contact deleted successfully";
     }
+
+
 }

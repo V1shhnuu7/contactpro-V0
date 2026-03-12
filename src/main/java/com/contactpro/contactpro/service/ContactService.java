@@ -233,6 +233,87 @@ public class ContactService {
                 .collect(Collectors.toList());
     }
 
+    public Page<ContactResponse> getContactsPaged(Long userId, int page, int size) {
+
+        Page<Contact> contacts =
+                contactRepository.findByUserId(
+                        userId,
+                        PageRequest.of(page, size)
+                );
+
+        return contacts.map(contact ->
+                new ContactResponse(
+                        contact.getId(),
+                        contact.getName(),
+                        contact.getPhone(),
+                        contact.getEmail(),
+                        contact.getCategory(),
+                        contact.isBlocked(),
+                        contact.isFavorite(),
+                        contact.getCreatedAt()
+                )
+        );
+    }
+    // converts searched contacts into API response format
+    public List<ContactResponse> searchContacts(String name) {
+
+        return contactRepository
+                .findByNameContainingIgnoreCase(name)
+                .stream()
+                .map(contact -> new ContactResponse(
+                        contact.getId(),
+                        contact.getName(),
+                        contact.getPhone(),
+                        contact.getEmail(),
+                        contact.getCategory(),
+                        contact.isBlocked(),
+                        contact.isFavorite(),
+                        contact.getCreatedAt()
+                ))
+                .toList();
+    }
+
+    public List<ContactResponse> getFavoriteContacts(Long userId) {
+
+        return contactRepository
+                .findByUserIdAndIsFavoriteTrue(userId)
+                .stream()
+                .map(contact -> new ContactResponse(
+                        contact.getId(),
+                        contact.getName(),
+                        contact.getPhone(),
+                        contact.getEmail(),
+                        contact.getCategory(),
+                        contact.isBlocked(),
+                        contact.isFavorite(),
+                        contact.getCreatedAt()
+                ))
+                .toList();
+    }
+    // converts favorite contacts into API response format
+
+    public List<ContactResponse> getBlockedContacts(Long userId) {
+
+        return contactRepository
+                .findByUserIdAndIsBlockedTrue(userId)
+                .stream()
+                .map(contact -> new ContactResponse(
+                        contact.getId(),
+                        contact.getName(),
+                        contact.getPhone(),
+                        contact.getEmail(),
+                        contact.getCategory(),
+                        contact.isBlocked(),
+                        contact.isFavorite(),
+                        contact.getCreatedAt()
+                ))
+                .toList();
+    }
+// converts blocked contacts into API response format
+
+
+
+
     public String exportToVcf(Long userId) {
 
         List<Contact> contacts =
